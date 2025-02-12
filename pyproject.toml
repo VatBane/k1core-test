@@ -1,0 +1,15 @@
+[project]
+name = "k1core-test"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "celery>=5.4.0",
+    "django==5.1.5",
+    "fastapi==0.115.8",
+    "psycopg2>=2.9.10",
+    "pydantic-settings>=2.7.1",
+    "redis>=5.2.1",
+    "sqlalchemy>=2.0.38",
+    "uvicorn>=0.34.0",
+]
