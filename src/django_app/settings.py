@@ -18,7 +18,6 @@ from django_app.config.db import DefaultDBSettings
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -30,11 +29,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
     'currency.apps.CurrencyConfig',
+    'django_celery_beat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = 'django_app.urls'
@@ -73,29 +73,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'django_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': DefaultDBSettings().model_dump(),
-    'currency': DBSettings().model_dump()
-    # "default": {
-    #     "ENGINE": "django.db.backends.postgresql",
-    #     "HOST": "localhost",
-    #     "PORT": "5432",
-    #     "USER": "root",
-    #     "PASSWORD": "root",
-    #     "NAME": "default"
-    # },
-    # "currency": {
-    #     "ENGINE": "django.db.backends.postgresql",
-    #     "HOST": "localhost",
-    #     "PORT": "5432",
-    #     "USER": "root",
-    #     "PASSWORD": "root",
-    #     "NAME": "currency"
-    # }
+    # 'default': DefaultDBSettings().model_dump(),
+    # 'currency': DBSettings().model_dump()
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "localhost",
+        "PORT": "5432",
+        "USER": "root",
+        "PASSWORD": "root",
+        "NAME": "default"
+    },
+    "currency": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "localhost",
+        "PORT": "5432",
+        "USER": "root",
+        "PASSWORD": "root",
+        "NAME": "currency"
+    }
 }
 DATABASE_ROUTERS = ["currency.db_router.currency.CurrencyRouter"]
 
@@ -117,7 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -129,13 +127,14 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
