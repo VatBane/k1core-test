@@ -5,8 +5,7 @@ from celery import Celery
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_app.settings')
 
-app = Celery('loader', broker='redis://default:root@localhost:6380/0',
-             backend='db+postgresql://root:root@localhost:5432/worker_tasks')
+app = Celery('loader')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
@@ -16,4 +15,3 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
-
