@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from fastapi import APIRouter, Body, HTTPException
 from fastapi.params import Query
 
-from currency.models import Block, Currency
+from currency.models import Block, Currency, Provider
 from currency.schemas.block import Filter, BlockResult
 
 router = APIRouter(prefix='/block', tags=['Block'])
@@ -15,25 +15,13 @@ def search_blocks(filter: Annotated[Filter, Body()],
                   limit: Annotated[int, Query(gt=0)] = 20,
                   offset: Annotated[int, Query(ge=0)] = 0,
                   ):
-    filters = ''
+    blocks = Block.objects.all()
     if filter.currency:
-        filters += f"AND c.name = '{filter.currency}'\n"
+        blocks = blocks.filter(currency=Currency.objects.get(name=filter.currency))
     if filter.provider:
-        filters += f"AND pr.name = '{filter.provider}'\n"
+        blocks = blocks.filter(provider=Provider.objects.get(name=filter.provider))
 
-    # TODO fix
-    # WARNING
-    # very dangerous to SQL injections
-    query = f"""
-    SELECT bl.id, c.name, pr.name, bl.block_number, bl.created_at, bl.stored_at
-    FROM currency_block bl
-    JOIN currency_currency c ON bl.currency_id = c.id
-    JOIN currency_provider pr ON bl.provider_id = pr.id
-    WHERE 1 = 1
-    {filters}
-    ORDER BY created_at DESC
-    """
-    blocks = Block.objects.raw(query)[offset:offset + limit]
+    blocks = blocks[offset:offset + limit]
 
     result = [BlockResult.from_django(block) for block in blocks]
 
