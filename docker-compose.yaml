@@ -1,0 +1,36 @@
+services:
+  application:
+    image: test-app
+    container_name: test-app
+    ports:
+      - "8100:8000"
+      - "8101:8001"
+    restart: always
+    command: >
+      bash -c "python manage.py migrate --database default &&
+               python manage.py migrate --database currency &&
+               /usr/bin/supervisord"
+    environment:
+      DEFAULT_DB_HOST: main-db
+      DEFAULT_DB_PORT: 5432
+      DEFAULT_DB_USER: root
+      DEFAULT_DB_PASS: root
+      DEFAULT_DB_NAME: default-test
+      CURRENCY_DB_HOST: main-db
+      CURRENCY_DB_PORT: 5432
+      CURRENCY_DB_USER: root
+      CURRENCY_DB_PASS: root
+      CURRENCY_DB_NAME: currency-test
+      CELERY_BROKER_HOST: redis_container
+      CELERY_BROKER_PORT: 6379
+      CELERY_BROKER_USER: default
+      CELERY_BROKER_PASS: root
+      CELERY_BROKER_DB: 0
+      SECRET_KEY: 'django-insecure-ocm&jftup&57xaz3r874ewm9upnqv#h*bi6s05%ix%or17v2(&'
+      DEBUG: TRUE
+    networks:
+      - service-network
+
+networks:
+  service-network:
+    external: True
