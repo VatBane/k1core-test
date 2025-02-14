@@ -21,8 +21,11 @@ application = get_asgi_application()
 
 def init(app: FastAPI):
     from currency.routers.currency.router import router as currency_router
+    from currency.routers.provider.router import router as provider_router
+    from currency.routers.block.router import router as block_router
 
     app.include_router(currency_router)
-
+    app.include_router(provider_router)
+    app.include_router(block_router)
 
 init(app)
