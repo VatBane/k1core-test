@@ -1,48 +1,40 @@
 from typing import Annotated
 
-from django.core.exceptions import ObjectDoesNotExist
 from fastapi import APIRouter, Body, HTTPException
 from fastapi.params import Query
 
-from currency.models import Block, Currency, Provider
-from currency.schemas.block import Filter, BlockResult
+from currency.exceptions import ResourceNotFoundError
+from currency.routers.block.controller import BlockRouterController
+from currency.schemas.block import Filter
 
-router = APIRouter(prefix='/block', tags=['Block'])
+block_router = APIRouter(prefix='/block', tags=['Block'])
 
 
-@router.post('/by_filters')
-def search_blocks(filter: Annotated[Filter, Body()],
-                  limit: Annotated[int, Query(gt=0)] = 20,
-                  offset: Annotated[int, Query(ge=0)] = 0,
-                  ):
-    blocks = Block.objects.all()
-    if filter.currency:
-        blocks = blocks.filter(currency=Currency.objects.get(name=filter.currency))
-    if filter.provider:
-        blocks = blocks.filter(provider=Provider.objects.get(name=filter.provider))
+@block_router.post('/by_filters')
+def get_blocks_by_filters(filters: Annotated[Filter, Body()],
+                          limit: Annotated[int, Query(gt=0)] = 20,
+                          offset: Annotated[int, Query(ge=0)] = 0,
+                          ):
+    controller = BlockRouterController()
 
-    blocks = blocks[offset:offset + limit]
-
-    result = [BlockResult.from_django(block) for block in blocks]
-
+    result = controller.get_block_by_filters(filters=filters, limit=limit, offset=offset)
     return result
 
 
-@router.get('/')
-def get_info_about_block(block_id: Annotated[int | None, Query(gt=0)] = None,
-                         currency: Annotated[str | None, Query(min_length=1)] = None,
-                         block_number: Annotated[int | None, Query()] = None):
+@block_router.get('/')
+def get_block_info(block_id: Annotated[int | None, Query(gt=0)] = None,
+                   currency: Annotated[str | None, Query(min_length=1)] = None,
+                   block_number: Annotated[int | None, Query()] = None):
     if not block_id and not (currency and block_number):
         raise HTTPException(status_code=422, detail="Block ID or currency name with number must be provided!")
 
-    try:
-        if block_id:
-            block = Block.objects.get(id=block_id)
-        else:
-            block = Block.objects.get(currency=Currency.objects.get(name=currency), block_number=block_number)
-    except ObjectDoesNotExist:
-        raise HTTPException(status_code=404, detail="Object doesn't exist!")
+    controller = BlockRouterController()
 
-    result = BlockResult.from_django(block)
+    try:
+        result = controller.get_block_info(block_id=block_id,
+                                           currency=currency,
+                                           block_number=block_number)
+    except ResourceNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
 
     return result

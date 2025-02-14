@@ -1,6 +1,5 @@
 import datetime
 
-import requests
 from celery import shared_task
 
 from currency.models import Block, Currency, Provider

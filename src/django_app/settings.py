@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 from currency.config.db import DBSettings
@@ -78,24 +78,24 @@ WSGI_APPLICATION = 'django_app.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': DefaultDBSettings().model_dump(),
-    # 'currency': DBSettings().model_dump()
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "HOST": "localhost",
-        "PORT": "5432",
-        "USER": "root",
-        "PASSWORD": "root",
-        "NAME": "default"
-    },
-    "currency": {
-        "ENGINE": "django.db.backends.postgresql",
-        "HOST": "localhost",
-        "PORT": "5432",
-        "USER": "root",
-        "PASSWORD": "root",
-        "NAME": "currency"
-    }
+    'default': DefaultDBSettings().model_dump(),
+    'currency': DBSettings().model_dump()
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "HOST": "localhost",
+    #     "PORT": "5432",
+    #     "USER": "root",
+    #     "PASSWORD": "root",
+    #     "NAME": "default"
+    # },
+    # "currency": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "HOST": "localhost",
+    #     "PORT": "5432",
+    #     "USER": "root",
+    #     "PASSWORD": "root",
+    #     "NAME": "currency"
+    # }
 }
 DATABASE_ROUTERS = ["currency.db_router.currency.CurrencyRouter"]
 
@@ -140,6 +140,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-CELERY_BROKER_URL='redis://default:root@localhost:6380/0'
+CELERY_BROKER_HOST = os.environ.get('CELERY_BROKER_HOST')
+CELERY_BROKER_PORT = os.environ.get('CELERY_BROKER_PORT')
+CELERY_BROKER_USER = os.environ.get('CELERY_BROKER_USER')
+CELERY_BROKER_PASS = os.environ.get('CELERY_BROKER_PASS')
+CELERY_BROKER_DB = os.environ.get('CELERY_BROKER_DB')
+CELERY_BROKER_URL = f'redis://{CELERY_BROKER_USER}:{CELERY_BROKER_PASS}@{CELERY_BROKER_HOST}:{CELERY_BROKER_PORT}/{CELERY_BROKER_DB}'
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_RESULT_EXTENDED = True

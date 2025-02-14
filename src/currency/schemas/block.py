@@ -26,3 +26,8 @@ class BlockResult(BaseModel):
                    block_number=block.block_number,
                    created_at=block.created_at,
                    stored_at=block.stored_at)
+
+
+class BlocksByFilterResult(BaseModel):
+    result: list[BlockResult]
+    total: int = Field(ge=0)
