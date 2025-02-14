@@ -3,11 +3,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class DefaultDBSettings(BaseSettings):
-    engine: str = 'django.db.backends.postgresql'
-    host: str = Field(min_length=1)
-    port: int = Field(gt=0)
-    user: str = Field(min_length=1, validation_alias='default_db_user')
-    password: str = Field(validation_alias='default_db_pass')
-    name: str = Field(min_length=1)
+    ENGINE: str = 'django.db.backends.postgresql'
+    HOST: str = Field(min_length=1)
+    PORT: int = Field(gt=0)
+    USER: str = Field(min_length=1, validation_alias='DEFAULT_DB_USER')
+    PASSWORD: str = Field(validation_alias='DEFAULT_DB_PASS')
+    NAME: str = Field(min_length=1)
 
-    model_config = SettingsConfigDict(env_prefix='default_db_')
+    model_config = SettingsConfigDict(env_prefix='DEFAULT_DB_')

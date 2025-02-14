@@ -2,7 +2,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class DBSettings(BaseSettings):
+class CurrencyDBSettings(BaseSettings):
     ENGINE: str = 'django.db.backends.postgresql'
     HOST: str = Field(min_length=1)
     PORT: int = Field(gt=0)

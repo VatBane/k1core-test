@@ -4,12 +4,12 @@ from django.db import models
 # Create your models here.
 class Currency(models.Model):
     id_: models.IntegerField(name="id", primary_key=True)
-    name = models.CharField(max_length=16)
+    name = models.CharField(max_length=16, unique=True)
 
 
 class Provider(models.Model):
     id_: models.IntegerField(name="id", primary_key=True)
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, unique=True)
     api_key = models.CharField(max_length=64)
 
 

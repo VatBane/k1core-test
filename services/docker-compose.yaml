@@ -1,0 +1,6 @@
+include:
+  - ./postgres/postgres.yaml
+  - ./redis/redis.yaml
+
+networks:
+  service-network:

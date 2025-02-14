@@ -9,8 +9,6 @@ class BlockChairAPIServicer:
         url = f"https://api.blockchair.com/{currency.lower()}/stats"
         response = requests.get(url, timeout=15)
 
-        print(response.status_code)
-        print(response.json())
         if response.status_code >= 500:
             raise ServiceConnectionError('BlockChair service not available!')
         elif response.status_code == 404:

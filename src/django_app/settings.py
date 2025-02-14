@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
-from currency.config.db import DBSettings
+from currency.config.db import CurrencyDBSettings
 from django_app.config.db import DefaultDBSettings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ocm&jftup&57xaz3r874ewm9upnqv#h*bi6s05%ix%or17v2(&'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', "False").lower() in ['true', '1', 'y', 'yes']
 
 ALLOWED_HOSTS = []
 
@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'django_app.wsgi.application'
 
 DATABASES = {
     'default': DefaultDBSettings().model_dump(),
-    'currency': DBSettings().model_dump()
+    'currency': CurrencyDBSettings().model_dump()
     # "default": {
     #     "ENGINE": "django.db.backends.postgresql",
     #     "HOST": "localhost",
@@ -97,7 +97,7 @@ DATABASES = {
     #     "NAME": "currency"
     # }
 }
-DATABASE_ROUTERS = ["currency.db_router.currency.CurrencyRouter"]
+# DATABASE_ROUTERS = ["currency.db_router.currency.CurrencyRouter"]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

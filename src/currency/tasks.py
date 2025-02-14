@@ -15,8 +15,8 @@ def load_btc():
     block_dto = servicer.get_last_block(btc.name)
     block_details = servicer.get_block_details(btc.name, block_dto.block_hash)
 
-    block = Block(currency_id=btc,
-          provider_id=block_chair,
+    block = Block(currency_id=btc.id,
+          provider_id=block_chair.id,
           block_number=block_details.block_number,
           created_at=block_details.created_at,
           stored_at=datetime.datetime.now()
@@ -33,8 +33,8 @@ def load_eth():
     block_dto = servicer.get_last_block(eth.name)
     block_details = servicer.get_block_details(eth.name, block_dto.block_height)
 
-    block = Block(currency_id=eth,
-          provider_id=block_chair,
+    block = Block(currency_id=eth.id,
+          provider_id=block_chair.id,
           block_number=block_details.block_number,
           created_at=block_details.created_at,
           stored_at=datetime.datetime.now()
